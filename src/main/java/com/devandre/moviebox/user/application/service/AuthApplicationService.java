@@ -1,5 +1,6 @@
 package com.devandre.moviebox.user.application.service;
 
+import com.devandre.moviebox.shared.infrastructure.security.jwt.JwtUtils;
 import com.devandre.moviebox.user.application.dto.request.AuthenticateUserRequest;
 import com.devandre.moviebox.user.application.dto.request.CreateUserRequest;
 import com.devandre.moviebox.user.application.dto.response.ActivationCodeResponse;
@@ -14,15 +15,13 @@ import org.springframework.stereotype.Service;
 public class AuthApplicationService implements AuthenticateUserCommand {
 
     private final JwtUtils jwtUtils;
-    private final AuthenticationManager authenticationManager;
-    private final TokenApplicationService tokenApplicationService;
+//    private final AuthenticationManager authenticationManager;
+//    private final TokenApplicationService tokenApplicationService;
     private final UserApplicationService userApplicationService;
     private final ActivationCodeApplicationService activationCodeApplicationService;
 
-    public AuthApplicationService(JwtUtils jwtUtils, AuthenticationManager authenticationManager, TokenApplicationService tokenApplicationService, UserApplicationService userApplicationService, ActivationCodeApplicationService activationCodeApplicationService) {
+    public AuthApplicationService(JwtUtils jwtUtils, UserApplicationService userApplicationService, ActivationCodeApplicationService activationCodeApplicationService) {
         this.jwtUtils = jwtUtils;
-        this.authenticationManager = authenticationManager;
-        this.tokenApplicationService = tokenApplicationService;
         this.userApplicationService = userApplicationService;
         this.activationCodeApplicationService = activationCodeApplicationService;
     }
@@ -38,9 +37,8 @@ public class AuthApplicationService implements AuthenticateUserCommand {
 
         User newUser = userApplicationService.registerUser(request);
 
-        activationCodeService.sendNewActivationCode(newUser);
+        activationCodeApplicationService.sendNewActivationCode(newUser);
         log.info("Activation code sent to email: {}", request.email());
-
 
         return ActivationCodeResponse.builder()
                 .message("Activation code sent to email: " + request.email())

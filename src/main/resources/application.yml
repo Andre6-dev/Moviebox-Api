@@ -58,6 +58,19 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+          ssl.trust: smtp.gmail.com
+
 server:
   port: 8080
 
