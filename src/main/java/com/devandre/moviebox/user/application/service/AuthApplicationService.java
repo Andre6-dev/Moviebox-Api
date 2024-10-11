@@ -6,6 +6,8 @@ import com.devandre.moviebox.user.application.dto.request.CreateUserRequest;
 import com.devandre.moviebox.user.application.dto.response.ActivationCodeResponse;
 import com.devandre.moviebox.user.application.dto.response.AuthenticateUserResponse;
 import com.devandre.moviebox.user.application.port.in.command.AuthenticateUserCommand;
+import org.springframework.security.authentication.AuthenticationManager;
+import com.devandre.moviebox.user.domain.model.ActivationCode;
 import com.devandre.moviebox.user.domain.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,15 @@ import org.springframework.stereotype.Service;
 public class AuthApplicationService implements AuthenticateUserCommand {
 
     private final JwtUtils jwtUtils;
-//    private final AuthenticationManager authenticationManager;
-//    private final TokenApplicationService tokenApplicationService;
+    private final AuthenticationManager authenticationManager;
+    private final TokenApplicationService tokenApplicationService;
     private final UserApplicationService userApplicationService;
     private final ActivationCodeApplicationService activationCodeApplicationService;
 
-    public AuthApplicationService(JwtUtils jwtUtils, UserApplicationService userApplicationService, ActivationCodeApplicationService activationCodeApplicationService) {
+    public AuthApplicationService(JwtUtils jwtUtils, AuthenticationManager authenticationManager, TokenApplicationService tokenApplicationService, UserApplicationService userApplicationService, ActivationCodeApplicationService activationCodeApplicationService) {
         this.jwtUtils = jwtUtils;
+        this.authenticationManager = authenticationManager;
+        this.tokenApplicationService = tokenApplicationService;
         this.userApplicationService = userApplicationService;
         this.activationCodeApplicationService = activationCodeApplicationService;
     }
@@ -52,6 +56,15 @@ public class AuthApplicationService implements AuthenticateUserCommand {
 
     @Override
     public ActivationCodeResponse activate(String key) {
-        return null;
+        ActivationCode activationCode = activationCodeApplicationService.getActivationCodeByKey(key);
+
+        activationCodeApplicationService.checkActivationCodeExpiration(activationCode);
+        userApplicationService.updateUserEnabledStatus(activationCode.getUser().getEmail().value(), true);
+        activationCodeApplicationService.deleteActivationCodeById(activationCode.getId());
+
+        log.info("User with email: {} has successfully activated, ", activationCode.getUser().getEmail());
+        return ActivationCodeResponse.builder()
+                .message("User with email: " + activationCode.getUser().getEmail() + " has successfully activated")
+                .build();
     }
 }
