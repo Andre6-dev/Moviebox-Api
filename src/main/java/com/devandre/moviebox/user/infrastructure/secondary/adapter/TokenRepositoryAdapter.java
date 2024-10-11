@@ -1,13 +1,18 @@
 package com.devandre.moviebox.user.infrastructure.secondary.adapter;
 
 import com.devandre.moviebox.shared.infrastructure.security.jwt.JwtUtils;
-import com.devandre.moviebox.user.application.port.out.TokenCodePersistencePort;
+import com.devandre.moviebox.user.application.port.out.TokenPersistencePort;
+import com.devandre.moviebox.user.domain.model.Token;
 import com.devandre.moviebox.user.domain.model.User;
 import com.devandre.moviebox.user.infrastructure.secondary.mapper.TokenMapper;
 import com.devandre.moviebox.user.infrastructure.secondary.persistence.JpaTokenRepository;
+import com.devandre.moviebox.user.infrastructure.secondary.persistence.enums.TokenType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 
-public class TokenRepositoryAdapter implements TokenCodePersistencePort {
+@Component
+public class TokenRepositoryAdapter implements TokenPersistencePort {
 
     private final JpaTokenRepository jpaTokenRepository;
     private final TokenMapper tokenMapper;
@@ -23,16 +28,41 @@ public class TokenRepositoryAdapter implements TokenCodePersistencePort {
 
     @Override
     public void createToken(User user, String jwt) {
-
+        jpaTokenRepository.save(
+                tokenMapper.mapToEntity(
+                        Token.builder()
+                                .jwt(jwt)
+                                .user(user)
+                                .tokenType(TokenType.BEARER)
+                                .expirationDate(null)
+                                .expired(false)
+                                .revoked(false)
+                                .build()
+                )
+        );
     }
 
     @Override
     public void deleteTokenByUser(User user) {
-
+        jpaTokenRepository.findByUser_Id(user.getDbId())
+                .ifPresent(jpaTokenRepository::delete);
     }
 
     @Override
     public String isTokenValid(String jwt) {
-        return "";
+        UserDetails userDetails = extractUserDetails(jwt);
+        boolean isTokenValid = jpaTokenRepository.findByJwt(jwt)
+                .map(token -> !token.isExpired() && !token.isRevoked())
+                .orElse(false);
+        if (isTokenValid && jwtUtils.validateJwtToken(jwt)) {
+            return userDetails.getUsername();
+        } else {
+            throw new RuntimeException("Invalid token");
+        }
+    }
+
+    private UserDetails extractUserDetails(String jwt) {
+        String email = jwtUtils.getEmailFromToken(jwt);
+        return userDetailsService.loadUserByUsername(email);
     }
 }

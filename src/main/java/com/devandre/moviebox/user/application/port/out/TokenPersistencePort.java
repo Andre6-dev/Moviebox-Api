@@ -2,7 +2,7 @@ package com.devandre.moviebox.user.application.port.out;
 
 import com.devandre.moviebox.user.domain.model.User;
 
-public interface TokenCodePersistencePort {
+public interface TokenPersistencePort {
 
     void createToken(User user, String jwt);
 
