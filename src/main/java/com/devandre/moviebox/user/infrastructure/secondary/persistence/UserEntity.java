@@ -1,10 +1,6 @@
 package com.devandre.moviebox.user.infrastructure.secondary.persistence;
 
 import com.devandre.moviebox.shared.infrastructure.persistence.AbstractAuditingEntity;
-import com.devandre.moviebox.user.domain.model.User;
-import com.devandre.moviebox.user.domain.vo.UserEmail;
-import com.devandre.moviebox.user.domain.vo.UserPassword;
-import com.devandre.moviebox.user.domain.vo.UserPublicId;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +18,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -82,7 +77,7 @@ public class UserEntity extends AbstractAuditingEntity<Long> {
     @JoinTable(
             name = "role_authority",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_name", referencedColumnName = "roleName")}
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )
     private Set<RoleEntity> roles = new HashSet<>();
 

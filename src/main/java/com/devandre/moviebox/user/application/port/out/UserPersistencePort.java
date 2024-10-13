@@ -12,4 +12,5 @@ public interface UserPersistencePort {
     Optional<User> getOneByEmail(UserEmail userEmail);
     void enableUser(UserEmail userEmail, boolean enabled);
     boolean existsByEmail(UserEmail userEmail);
+    boolean existsByDocumentNumber(String documentNumber);
 }

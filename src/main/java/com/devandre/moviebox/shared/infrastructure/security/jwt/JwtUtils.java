@@ -84,4 +84,10 @@ public class JwtUtils {
         }
         return false;
     }
+
+    public int getJwtExpirationMs() {
+        Date date = new Date(System.currentTimeMillis() + jwtExpirationMs);
+        // format: HH:mm
+        return (int) (date.getTime() - System.currentTimeMillis());
+    }
 }

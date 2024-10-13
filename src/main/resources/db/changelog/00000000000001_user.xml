@@ -1,74 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-
-    <changeSet id="00000000000001-seq" author="codecake">
-        <createSequence sequenceName="user_sequence" startValue="1" incrementBy="1"/>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1728751088838-1" author="devandre">
+        <createSequence incrementBy="1" sequenceName="role_sequence" startValue="1"/>
     </changeSet>
-
-    <changeSet id="00000000000001-user" author="codecake">
-        <createTable tableName="ecommerce_user">
-            <column name="id" type="bigint">
-                <constraints primaryKey="true" nullable="false"/>
+    <changeSet id="1728751088838-2" author="devandre">
+        <createSequence incrementBy="1" sequenceName="user_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet id="1728751088838-3" author="devandre">
+        <createTable tableName="activation_code">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_activation_code"/>
             </column>
-            <column name="public_id" type="${uuidType}">
-                <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="first_name" type="varchar(50)"/>
-            <column name="last_name" type="varchar(50)"/>
-            <column name="email" type="varchar(255)">
-                <constraints unique="true" nullable="true" uniqueConstraintName="ux_user_email"/>
-            </column>
-            <column name="address_street" type="varchar(255)"/>
-            <column name="address_zip_code" type="varchar(255)"/>
-            <column name="address_city" type="varchar(255)"/>
-            <column name="address_country" type="varchar(255)"/>
-            <column name="image_url" type="varchar(256)"/>
-            <column name="last_seen" type="timestamp">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_date" type="timestamp"/>
-            <column name="last_modified_date" type="timestamp"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="key" type="VARCHAR(255)"/>
+            <column name="expiration_date" type="DATETIME"/>
         </createTable>
     </changeSet>
-
-    <changeSet id="00000000000001-authority" author="codecake">
-        <createTable tableName="authority">
-            <column name="name" type="varchar(50)">
-                <constraints primaryKey="true" nullable="false"/>
+    <changeSet id="1728751088838-4" author="devandre">
+        <createTable tableName="moviebox_users">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_moviebox_users"/>
             </column>
-        </createTable>
-
-        <createTable tableName="user_authority">
-            <column name="user_id" type="bigint">
+            <column name="created_date" type="DATETIME"/>
+            <column name="last_modified_date" type="DATETIME"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="image_url" type="VARCHAR(255)"/>
+            <column name="public_id" type="UUID"/>
+            <column name="address" type="VARCHAR(255)"/>
+            <column name="document_number" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="authority_name" type="varchar(50)">
+            <column name="is_enabled" type="BOOLEAN"/>
+            <column name="non_locked" type="BOOLEAN"/>
+            <column name="using_mfa" type="BOOLEAN"/>
+            <column name="is_two_factor_enabled" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1728751088838-5" author="devandre">
+        <createTable tableName="role">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role"/>
+            </column>
+            <column name="role_name" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
+            <column name="permission" type="VARCHAR(255)"/>
         </createTable>
+    </changeSet>
+    <changeSet id="1728751088838-6" author="devandre">
+        <createTable tableName="role_authority">
+            <column name="role_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role_authority"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role_authority"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1728751088838-7" author="devandre">
+        <createTable tableName="token">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_token"/>
+            </column>
+            <column name="user_id" type="BIGINT"/>
+            <column name="token_type" type="VARCHAR(255)"/>
+            <column name="jwt" type="VARCHAR(255)"/>
+            <column name="revoked" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expired" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expiration_date" type="DATETIME"/>
+            <column name="creation_date" type="DATETIME"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1728751088838-8" author="devandre">
+        <addUniqueConstraint columnNames="user_id" constraintName="uc_activation_code_user"
+                             tableName="activation_code"/>
+    </changeSet>
+    <changeSet id="1728751088838-9" author="devandre">
+        <addUniqueConstraint columnNames="jwt" constraintName="uc_token_jwt" tableName="token"/>
+    </changeSet>
+    <changeSet id="1728751088838-10" author="devandre">
+        <addUniqueConstraint columnNames="user_id" constraintName="uc_token_user" tableName="token"/>
+    </changeSet>
+    <changeSet id="1728751088838-11" author="devandre">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="activation_code"
+                                 constraintName="FK_ACTIVATION_CODE_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="moviebox_users"/>
+    </changeSet>
+    <changeSet id="1728751088838-12" author="devandre">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="token" constraintName="FK_TOKEN_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="moviebox_users"/>
+    </changeSet>
+    <changeSet id="1728751088838-13" author="devandre">
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="role_authority"
+                                 constraintName="fk_rolaut_on_role_entity" referencedColumnNames="id"
+                                 referencedTableName="role"/>
+    </changeSet>
+    <changeSet id="1728751088838-14" author="devandre">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="role_authority"
+                                 constraintName="fk_rolaut_on_user_entity" referencedColumnNames="id"
+                                 referencedTableName="moviebox_users"/>
+    </changeSet>
 
-        <addPrimaryKey columnNames="user_id, authority_name" tableName="user_authority"/>
-
-        <addForeignKeyConstraint baseColumnNames="authority_name"
-                                 baseTableName="user_authority"
-                                 constraintName="fk_authority_name"
-                                 referencedColumnNames="name"
-                                 referencedTableName="authority"/>
-
-        <addForeignKeyConstraint baseColumnNames="user_id"
-                                 baseTableName="user_authority"
-                                 constraintName="fk_user_id"
-                                 referencedColumnNames="id"
-                                 referencedTableName="ecommerce_user"/>
+    <!-- Changeset for seeding data into the role table -->
+    <changeSet id="002-seed-roles" author="devandre">
         <loadData
                 file="db/data/roles.csv"
-                separator=";"
-                tableName="authority"
-                usePreparedStatements="true">
-            <column name="name" type="string"/>
+                tableName="role"
+                separator=","
+                encoding="UTF-8">
+            <column name="role_id" type="BIGINT"/>
+            <column name="role_name" type="VARCHAR(50)"/>
+            <column name="permission" type="VARCHAR(255)"/>
         </loadData>
     </changeSet>
+
 </databaseChangeLog>

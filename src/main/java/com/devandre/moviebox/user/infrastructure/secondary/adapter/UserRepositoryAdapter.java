@@ -48,7 +48,12 @@ public class UserRepositoryAdapter implements UserPersistencePort {
 
     @Override
     public boolean existsByEmail(UserEmail userEmail) {
-        jpaUserRepository.existsByEmail(userEmail.value());
+        return jpaUserRepository.existsByEmail(userEmail.value());
+    }
+
+    @Override
+    public boolean existsByDocumentNumber(String documentNumber) {
+        return jpaUserRepository.existsByDocumentNumber(documentNumber);
     }
 
 

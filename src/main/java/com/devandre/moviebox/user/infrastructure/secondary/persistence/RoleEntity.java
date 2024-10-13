@@ -1,6 +1,5 @@
 package com.devandre.moviebox.user.infrastructure.secondary.persistence;
 
-import com.devandre.moviebox.user.domain.model.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -27,7 +25,6 @@ public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roleSequenceGenerator")
     @SequenceGenerator(name = "roleSequenceGenerator", sequenceName = "role_sequence", allocationSize = 1)
-    @Column(name = "role_id")
     private Long id;
 
     @Size(max = 50)

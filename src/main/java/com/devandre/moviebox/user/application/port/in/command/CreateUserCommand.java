@@ -8,4 +8,5 @@ public interface CreateUserCommand {
     User registerUser(CreateUserRequest createUserRequest);
     void updateUserEnabledStatus(String userEmail, boolean enabled);
     boolean isEmailAlreadyExist(String email);
+    boolean isDocumentNumberAlreadyExist(String documentNumber);
 }

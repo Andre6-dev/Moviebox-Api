@@ -12,7 +12,4 @@
     <property name="datetimeType" value="datetime" dbms="postgresql"/>
 
     <include file="/db/changelog/00000000000001_user.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/00000000000002_product_category.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/00000000000003_product.xml" relativeToChangelogFile="false"/>
-    <include file="/db/changelog/00000000000004_order.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

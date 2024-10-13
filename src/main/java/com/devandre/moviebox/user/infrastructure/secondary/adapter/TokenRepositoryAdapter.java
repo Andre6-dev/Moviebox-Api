@@ -7,11 +7,13 @@ import com.devandre.moviebox.user.domain.model.User;
 import com.devandre.moviebox.user.infrastructure.secondary.mapper.TokenMapper;
 import com.devandre.moviebox.user.infrastructure.secondary.persistence.JpaTokenRepository;
 import com.devandre.moviebox.user.infrastructure.secondary.persistence.enums.TokenType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class TokenRepositoryAdapter implements TokenPersistencePort {
 
     private final JpaTokenRepository jpaTokenRepository;
@@ -45,7 +47,11 @@ public class TokenRepositoryAdapter implements TokenPersistencePort {
     @Override
     public void deleteTokenByUser(User user) {
         jpaTokenRepository.findByUser_Id(user.getDbId())
-                .ifPresent(jpaTokenRepository::delete);
+                .ifPresent(token -> {
+                    log.info("Deleting token with id and userEmail: {} {}", token.getUser().getId(), user.getEmail());
+                    jpaTokenRepository.delete(token);
+                    jpaTokenRepository.flush();
+                });
     }
 
     @Override

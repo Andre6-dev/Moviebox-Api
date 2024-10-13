@@ -13,6 +13,7 @@ public interface JpaUserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByEmail(String email);
     Optional<UserEntity> findByPublicId(UUID publicId);
     boolean existsByEmail(String email);
+    boolean existsByDocumentNumber(String documentNumber);
 
     @Modifying
     @Query("UPDATE UserEntity u set u.enabled = :enabled where u.email = :email")

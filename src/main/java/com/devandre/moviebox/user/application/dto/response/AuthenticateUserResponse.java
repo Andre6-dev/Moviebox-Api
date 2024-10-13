@@ -5,6 +5,7 @@ import lombok.Builder;
 @Builder
 public record AuthenticateUserResponse(
         String jwt,
-        String email
+        String email,
+        String expirationDate
 ) {
 }

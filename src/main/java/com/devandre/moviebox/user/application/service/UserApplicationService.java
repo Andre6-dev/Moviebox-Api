@@ -11,6 +11,7 @@ import com.devandre.moviebox.user.domain.vo.UserEmail;
 import com.devandre.moviebox.user.domain.vo.UserPassword;
 import com.devandre.moviebox.user.domain.vo.UserPublicId;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -25,10 +26,12 @@ public class UserApplicationService implements GetUserCase, CreateUserCommand {
 
     private final UserPersistencePort userPersistencePort;
     private final RolePersistencePort rolePersistencePort;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserApplicationService(UserPersistencePort userPersistencePort, RolePersistencePort rolePersistencePort) {
+    public UserApplicationService(UserPersistencePort userPersistencePort, RolePersistencePort rolePersistencePort, PasswordEncoder passwordEncoder) {
         this.userPersistencePort = userPersistencePort;
         this.rolePersistencePort = rolePersistencePort;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -39,9 +42,9 @@ public class UserApplicationService implements GetUserCase, CreateUserCommand {
     }
 
     @Override
-    public User getUserByEmail(UserEmail email) {
+    public User getUserByEmail(String email) {
         log.info("Getting user with email: {}", email);
-        return userPersistencePort.getOneByEmail(email)
+        return userPersistencePort.getOneByEmail(new UserEmail(email))
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
     }
 
@@ -55,7 +58,7 @@ public class UserApplicationService implements GetUserCase, CreateUserCommand {
                 .lastName(createUserRequest.lastName())
                 .firstName(createUserRequest.firstName())
                 .email(new UserEmail(createUserRequest.email()))
-                .password(new UserPassword(createUserRequest.password()))
+                .password(new UserPassword(passwordEncoder.encode(createUserRequest.password())))
                 .imageURL(defaultProfileUrl)
                 .userPublicId(new UserPublicId(UUID.randomUUID()))
                 .address(createUserRequest.address())
@@ -81,6 +84,12 @@ public class UserApplicationService implements GetUserCase, CreateUserCommand {
     public boolean isEmailAlreadyExist(String email) {
         log.info("Checking if email already exists: {}", email);
         return userPersistencePort.existsByEmail(new UserEmail(email));
+    }
+
+    @Override
+    public boolean isDocumentNumberAlreadyExist(String documentNumber) {
+        log.info("Checking if document number already exists: {}", documentNumber);
+        return userPersistencePort.existsByDocumentNumber(documentNumber);
     }
 
 

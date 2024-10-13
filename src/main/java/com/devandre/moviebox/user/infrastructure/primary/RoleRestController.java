@@ -1,5 +1,6 @@
 package com.devandre.moviebox.user.infrastructure.primary;
 
+import com.devandre.moviebox.shared.application.constants.ProjectConstants;
 import com.devandre.moviebox.shared.infrastructure.ResponseHandler;
 import com.devandre.moviebox.user.application.port.in.query.GetRoleUseCase;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/roles")
+@RequestMapping(ProjectConstants.API_V1_ROLES)
 public class RoleRestController {
 
     private final GetRoleUseCase getRoleUseCase;
