@@ -1,6 +1,7 @@
 package com.devandre.moviebox.movie.infrastructure.secondary.mapper;
 
 import com.devandre.moviebox.movie.domain.model.Movie;
+import com.devandre.moviebox.movie.domain.vo.MoviePublicId;
 import com.devandre.moviebox.movie.infrastructure.secondary.persistence.MovieEntity;
 import com.devandre.moviebox.user.infrastructure.secondary.mapper.UserMapper;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ public class MovieMapper {
         return Movie.builder()
                 .id(movieEntity.getId())
                 .name(movieEntity.getName())
+                .publicId(new MoviePublicId(movieEntity.getPublicId()))
                 .releaseYear(movieEntity.getReleaseYear())
                 .synopsis(movieEntity.getSynopsis())
                 .posterUrl(movieEntity.getPosterURL())

@@ -25,7 +25,7 @@ public class MovieRatingMapper {
                 .build();
     }
 
-    public MovieRatingEntity mapToDomain(MovieRating movieRating) {
+    public MovieRatingEntity mapToEntity(MovieRating movieRating) {
         return MovieRatingEntity.builder()
                 .id(movieRating.getId())
                 .movie(movieMapper.mapToEntity(movieRating.getMovie()))

@@ -2,18 +2,23 @@ package com.devandre.moviebox.movie.application.service;
 
 import com.devandre.moviebox.movie.application.dto.request.CreateMovieRequest;
 import com.devandre.moviebox.movie.application.dto.request.UpdateMovieRequest;
+import com.devandre.moviebox.movie.application.dto.response.MovieCreateResponse;
 import com.devandre.moviebox.movie.application.dto.response.MoviesListResponse;
 import com.devandre.moviebox.movie.application.port.in.AdminMoviesUseCases;
 import com.devandre.moviebox.movie.application.port.in.GetMoviesUseCase;
 import com.devandre.moviebox.movie.application.port.out.MoviePersistencePort;
 import com.devandre.moviebox.movie.domain.model.Category;
 import com.devandre.moviebox.movie.domain.model.Movie;
+import com.devandre.moviebox.movie.domain.model.MovieRating;
 import com.devandre.moviebox.movie.domain.model.MovieSearchCriteria;
 import com.devandre.moviebox.movie.domain.vo.MoviePublicId;
 import com.devandre.moviebox.movie.infrastructure.secondary.mapper.CategoryMapper;
+import com.devandre.moviebox.movie.infrastructure.secondary.mapper.MovieRatingMapper;
 import com.devandre.moviebox.movie.infrastructure.secondary.persistence.CategoryEntity;
 import com.devandre.moviebox.movie.infrastructure.secondary.persistence.JpaCategoryRepository;
 import com.devandre.moviebox.movie.infrastructure.secondary.persistence.JpaMovieRatingRepository;
+import com.devandre.moviebox.movie.infrastructure.secondary.persistence.JpaMovieRepository;
+import com.devandre.moviebox.movie.infrastructure.secondary.persistence.MovieRatingEntity;
 import com.devandre.moviebox.user.application.port.out.UserPersistencePort;
 import com.devandre.moviebox.user.domain.model.User;
 import lombok.extern.slf4j.Slf4j;
@@ -32,15 +37,13 @@ public class MovieService implements GetMoviesUseCase, AdminMoviesUseCases {
     private final JpaCategoryRepository jpaCategoryRepository;
     private final CategoryMapper categoryMapper;
     private final UserPersistencePort userPersistencePort;
-    private final JpaMovieRatingRepository jpaMovieRatingRepository;
 
     public MovieService(MoviePersistencePort moviePersistencePort, JpaCategoryRepository jpaCategoryRepository,
-                        CategoryMapper categoryMapper, UserPersistencePort userPersistencePort, JpaMovieRatingRepository jpaMovieRatingRepository) {
+                        CategoryMapper categoryMapper, UserPersistencePort userPersistencePort) {
         this.moviePersistencePort = moviePersistencePort;
         this.jpaCategoryRepository = jpaCategoryRepository;
         this.categoryMapper = categoryMapper;
         this.userPersistencePort = userPersistencePort;
-        this.jpaMovieRatingRepository = jpaMovieRatingRepository;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class MovieService implements GetMoviesUseCase, AdminMoviesUseCases {
 
     @Override
     @Transactional
-    public Movie createMovie(CreateMovieRequest request) {
+    public MovieCreateResponse createMovie(CreateMovieRequest request) {
         log.info("Creating movie with title: {}", request.name());
         // validate movie
         if (moviePersistencePort.existsByName(request.name())) {
@@ -66,25 +69,15 @@ public class MovieService implements GetMoviesUseCase, AdminMoviesUseCases {
             throw new IllegalArgumentException("Movie with title: " + request.name() + " already exists");
         }
 
-        CategoryEntity category = jpaCategoryRepository.findById(request.categoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + request.categoryId()));
+        // Validate the request.rating to be between 1 and 5
+        if (request.rating() < 1 || request.rating() > 10) {
+            log.error("Rating must be between 1 and 5");
+            throw new IllegalArgumentException("Rating must be between 1 and 5");
+        }
 
-        User user = userPersistencePort.findById(request.createdBy())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + request.createdBy()));
+        Movie movie = moviePersistencePort.createMovie(request);
 
-        Movie newMovie = Movie.builder()
-                .name(request.name())
-                .publicId(new MoviePublicId(UUID.randomUUID()))
-                .releaseYear(request.releaseYear())
-                .synopsis(request.synopsis())
-                .posterUrl(request.posterURL())
-                .category(categoryMapper.mapToDomain(category))
-                .createdBy(user)
-                .build();
-
-        log.info("Saving movie with title: {}", newMovie.getName());
-
-        return moviePersistencePort.createMovie(newMovie);
+        return MovieCreateResponse.from(movie);
     }
 
     @Override
@@ -95,11 +88,8 @@ public class MovieService implements GetMoviesUseCase, AdminMoviesUseCases {
         Movie movieToUpdate = moviePersistencePort.getMovie(new MoviePublicId(movie.moviePublicId()))
                 .orElseThrow(() -> new IllegalArgumentException("Movie not found with id: " + movie.moviePublicId()));
 
-        CategoryEntity category = jpaCategoryRepository.findById(movieToUpdate.getId())
+        CategoryEntity category = jpaCategoryRepository.findById(movie.categoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + movieToUpdate.getId()));
-
-        User user = userPersistencePort.findById(movieToUpdate.getId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + movieToUpdate.getId()));
 
         moviePersistencePort.updateMovie(movieToUpdate.getId(), movie.name(), movie.releaseYear(),
                 movie.synopsis(), movie.posterURL(), category.getId());

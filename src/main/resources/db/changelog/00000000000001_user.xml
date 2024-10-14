@@ -9,7 +9,7 @@
         <createSequence incrementBy="1" sequenceName="role_sequence" startValue="1"/>
     </changeSet>
     <changeSet id="1728751088838-2" author="devandre">
-        <createSequence incrementBy="1" sequenceName="user_sequence" startValue="1"/>
+        <createSequence incrementBy="1" sequenceName="user_sequence" startValue="5"/>
     </changeSet>
     <changeSet id="1728751088838-3" author="devandre">
         <createTable tableName="activation_code">
@@ -114,7 +114,7 @@
     </changeSet>
 
     <!-- Changeset for seeding data into the role table -->
-    <changeSet id="002-seed-roles" author="devandre">
+    <changeSet id="1728751088838-15" author="devandre">
         <loadData
                 file="db/data/roles.csv"
                 tableName="role"
@@ -123,6 +123,41 @@
             <column name="role_id" type="BIGINT"/>
             <column name="role_name" type="VARCHAR(50)"/>
             <column name="permission" type="VARCHAR(255)"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="1728751088838-16" author="devandre">
+        <loadData
+                file="db/data/users.csv"
+                tableName="moviebox_users"
+                separator=","
+                encoding="UTF-8">
+            <column name="id" type="numeric"/>
+            <column name="last_name" type="string"/>
+            <column name="first_name" type="string"/>
+            <column name="email" type="string"/>
+            <column name="password" type="string"/>
+            <column name="image_url" type="string"/>
+            <column name="public_id" type="uuid"/>
+            <column name="address" type="string"/>
+            <column name="document_number" type="string"/>
+            <column name="is_enabled" type="boolean"/>
+            <column name="non_locked" type="boolean"/>
+            <column name="using_mfa" type="boolean"/>
+            <column name="is_two_factor_enabled" type="boolean"/>
+            <column name="created_date" type="datetime"/>
+            <column name="last_modified_date" type="datetime"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="1728751088838-17" author="devandre">
+        <loadData
+                file="db/data/users_role.csv"
+                tableName="role_authority"
+                separator=","
+                encoding="UTF-8">
+            <column name="user_id" type="numeric"/>
+            <column name="role_id" type="numeric"/>
         </loadData>
     </changeSet>
 

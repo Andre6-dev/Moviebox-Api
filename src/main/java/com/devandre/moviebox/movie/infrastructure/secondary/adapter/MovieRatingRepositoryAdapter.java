@@ -40,7 +40,6 @@ public class MovieRatingRepositoryAdapter implements MovieRatingPersistencePort 
                 .build();
 
         movieRatingRepository.save(movieRatingEntity);
-
     }
 
     @Override

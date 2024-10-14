@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,14 +73,14 @@ public class MovieController {
     @Tag(name = "Movies", description = "Update a movie")
     public ResponseEntity<Object> updateMovie(@RequestBody @Valid UpdateMovieRequest movie) {
         adminMoviesUseCases.updateMovie(movie);
-        return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, "Movie updated successfully", true);
+        return ResponseHandler.generateResponse(HttpStatus.OK, "Movie updated successfully", true);
     }
 
-    @DeleteMapping("/delete-movie")
+    @DeleteMapping("/delete-movie/{id}")
     @Tag(name = "Movies", description = "Delete a movie")
-    public ResponseEntity<Object> deleteMovie(@RequestParam UUID id) {
-        adminMoviesUseCases.deleteMovie(new MoviePublicId(id));
-        return ResponseHandler.generateResponse(HttpStatus.NO_CONTENT, "Movie deleted successfully", true);
+    public ResponseEntity<Object> deleteMovie(@PathVariable String id) {
+        adminMoviesUseCases.deleteMovie(new MoviePublicId(UUID.fromString(id)));
+        return ResponseHandler.generateResponse(HttpStatus.OK, "Movie deleted successfully", true);
     }
 
     @GetMapping("/categories")

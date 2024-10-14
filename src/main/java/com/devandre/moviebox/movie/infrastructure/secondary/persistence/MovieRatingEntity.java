@@ -25,7 +25,7 @@ public class MovieRatingEntity extends AbstractAuditingEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movieRatingSequenceGenerator")
-    @SequenceGenerator(name = "movieRatingSequenceGenerator", sequenceName = "movie_rating_sequence", allocationSize = 1)
+    @SequenceGenerator(name = "movieRatingSequenceGenerator", sequenceName = "movie_rating_sequence", allocationSize = 1, initialValue = 21)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

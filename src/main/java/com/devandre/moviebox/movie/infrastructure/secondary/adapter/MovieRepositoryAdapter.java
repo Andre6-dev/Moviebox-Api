@@ -1,13 +1,19 @@
 package com.devandre.moviebox.movie.infrastructure.secondary.adapter;
 
+import com.devandre.moviebox.movie.application.dto.request.CreateMovieRequest;
 import com.devandre.moviebox.movie.application.port.out.MoviePersistencePort;
 import com.devandre.moviebox.movie.domain.model.Movie;
 import com.devandre.moviebox.movie.domain.model.MovieSearchCriteria;
 import com.devandre.moviebox.movie.domain.vo.MoviePublicId;
 import com.devandre.moviebox.movie.infrastructure.secondary.mapper.MovieMapper;
+import com.devandre.moviebox.movie.infrastructure.secondary.persistence.CategoryEntity;
+import com.devandre.moviebox.movie.infrastructure.secondary.persistence.JpaCategoryRepository;
 import com.devandre.moviebox.movie.infrastructure.secondary.persistence.JpaMovieRatingRepository;
 import com.devandre.moviebox.movie.infrastructure.secondary.persistence.JpaMovieRepository;
 import com.devandre.moviebox.movie.infrastructure.secondary.persistence.MovieEntity;
+import com.devandre.moviebox.movie.infrastructure.secondary.persistence.MovieRatingEntity;
+import com.devandre.moviebox.user.infrastructure.secondary.persistence.JpaUserRepository;
+import com.devandre.moviebox.user.infrastructure.secondary.persistence.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -20,16 +26,23 @@ import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class MovieRepositoryAdapter implements MoviePersistencePort {
 
     private final JpaMovieRepository jpaMovieRepository;
     private final MovieMapper movieMapper;
+    private final JpaCategoryRepository jpaCategoryRepository;
+    private final JpaUserRepository jpaUserRepository;
+    private final JpaMovieRatingRepository jpaMovieRatingRepository;
 
-    public MovieRepositoryAdapter(JpaMovieRepository jpaMovieRepository, MovieMapper movieMapper) {
+    public MovieRepositoryAdapter(JpaMovieRepository jpaMovieRepository, MovieMapper movieMapper, JpaCategoryRepository jpaCategoryRepository, JpaUserRepository jpaUserRepository, JpaMovieRatingRepository jpaMovieRatingRepository) {
         this.jpaMovieRepository = jpaMovieRepository;
         this.movieMapper = movieMapper;
+        this.jpaCategoryRepository = jpaCategoryRepository;
+        this.jpaUserRepository = jpaUserRepository;
+        this.jpaMovieRatingRepository = jpaMovieRatingRepository;
     }
 
     @Override
@@ -47,9 +60,37 @@ public class MovieRepositoryAdapter implements MoviePersistencePort {
     }
 
     @Override
-    public Movie createMovie(Movie movie) {
-        MovieEntity movieEntity = movieMapper.mapToEntity(movie);
+    public Movie createMovie(CreateMovieRequest request) {
+        CategoryEntity category = jpaCategoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + request.categoryId()));
+
+        UserEntity user = jpaUserRepository.findById(request.createdBy())
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + request.createdBy()));
+
+        MovieEntity movieEntity = MovieEntity.builder()
+                .name(request.name())
+                .publicId(new MoviePublicId(UUID.randomUUID()).value())
+                .releaseYear(request.releaseYear())
+                .synopsis(request.synopsis())
+                .posterURL(request.posterURL())
+                .category(category)
+                .createdBy(user)
+                .build();
+
         jpaMovieRepository.saveAndFlush(movieEntity);
+
+        // Create a movie rating entity
+
+        MovieEntity movieToAddRating = jpaMovieRepository.findById(movieEntity.getId()).orElseThrow();
+
+        MovieRatingEntity movieRatingEntity = MovieRatingEntity.builder()
+                .movie(movieToAddRating)
+                .user(user)
+                .rating(request.rating())
+                .build();
+
+        jpaMovieRatingRepository.saveAndFlush(movieRatingEntity);
+
         return movieMapper.mapToDomain(movieEntity);
     }
 
@@ -65,7 +106,8 @@ public class MovieRepositoryAdapter implements MoviePersistencePort {
 
     @Override
     public void deleteMovie(MoviePublicId id) {
-        jpaMovieRepository.deleteByPublicId(id.value());
+        MovieEntity movieToAddRating = jpaMovieRepository.findByPublicId(id.value()).orElseThrow();
+        jpaMovieRepository.deleteById(movieToAddRating.getId());
     }
 
     @Override
