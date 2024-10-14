@@ -4,6 +4,7 @@ import com.devandre.moviebox.shared.application.constants.ProjectConstants;
 import com.devandre.moviebox.shared.infrastructure.ResponseHandler;
 import com.devandre.moviebox.user.application.service.UserApplicationService;
 import com.devandre.moviebox.user.domain.vo.UserPublicId;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,11 +25,13 @@ public class UserRestController {
     }
 
     @GetMapping("/find-one")
+    @Tag(name = "Users", description = "Get user by public id")
     public ResponseEntity<Object> findOne(@RequestParam UUID publicId) {
         return ResponseHandler.generateResponse(HttpStatus.OK, userApplicationService.getUser(new UserPublicId(publicId)), true);
     }
 
     @GetMapping("/find-one-by-email")
+    @Tag(name = "Users", description = "Get user by email")
     public ResponseEntity<Object> findOneByEmail(@RequestParam String email) {
         return ResponseHandler.generateResponse(HttpStatus.OK, userApplicationService.getUserByEmail(email), true);
     }
