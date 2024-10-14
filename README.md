@@ -1,6 +1,7 @@
 # MovieBox API
 
-MovieBox API is a Spring Boot application designed to manage movies, categories, and user ratings. It provides endpoints for creating, updating, deleting, and retrieving movies, as well as user authentication and authorization using JWT.
+MovieBox API is a Spring Boot application designed to manage movies, categories, and user ratings. It provides endpoints
+for creating, updating, deleting, and retrieving movies, as well as user authentication and authorization using JWT.
 
 ## Table of Contents
 
@@ -22,7 +23,8 @@ The project is organized into several packages:
 - `com.devandre.moviebox.movie.domain`: Contains the domain models for movies.
 - `com.devandre.moviebox.movie.infrastructure`: Contains the infrastructure code for movies, including controllers.
 - `com.devandre.moviebox.shared`: Contains shared utilities and constants.
-- `com.devandre.moviebox.user`: Contains the application logic and infrastructure for user management and authentication.
+- `com.devandre.moviebox.user`: Contains the application logic and infrastructure for user management and
+  authentication.
 
 ## Technologies Used
 
@@ -52,14 +54,21 @@ The project is organized into several packages:
     cd moviebox
     ```
 
-2. Configure the database in `application.properties`:
-    ```properties
-    spring.datasource.url=jdbc:postgresql://localhost:5432/moviebox
-    spring.datasource.username=yourusername
-    spring.datasource.password=yourpassword
+2. You only need to configure the gmail stmp from your email account and put the enviroment variables of:
+    ```
+   username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    ```
+3. You can use the csv files to obtain the user, the first user is the only that have ROLE_ADMIN to make create, update and delete the movies.
+   The credentials are:
+    ```
+    email: john.doe@example.com
+    password:  password123
     ```
 
-3. Run the application:
+4. I provided all the requests in insomnia format, you can import the file `john.doe@example.com.json` to test the application. You can import it in Postman.
+
+5. Run the application and provided the enviroment variables of gmail if you want to register a user and activate the account.
     ```sh
     mvn spring-boot:run
     ```
@@ -69,7 +78,9 @@ The project is organized into several packages:
 ### Bean Configuration
 
 The `BeanConfig` class configures the OpenAPI documentation and password encoder:
+
 ```java
+
 @Configuration
 public class BeanConfig {
 
@@ -128,8 +139,11 @@ public class BeanConfig {
 
 ## Security
 
-The application uses JWT for authentication and authorization. The `AuthEntryPointJwt` class handles unauthorized access attempts:
+The application uses JWT for authentication and authorization. The `AuthEntryPointJwt` class handles unauthorized access
+attempts:
+
 ```java
+
 @Component
 @Slf4j
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
@@ -154,10 +168,13 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
 ### Swagger Documentation
 
-The application uses Swagger for API documentation. The Swagger UI can be accessed at `http://localhost:8080/swagger-ui/`.
+The application uses Swagger for API documentation. The Swagger UI can be accessed at
+`http://localhost:8080/swagger-ui/`.
 
 ### Contributing
-Contributions are welcome! Please fork the repository and create a pull request with your changes.  
+
+Contributions are welcome! Please fork the repository and create a pull request with your changes.
 
 ### License
+
 This project is licensed under the MIT License. See the LICENSE file for details.

@@ -46,10 +46,11 @@ public class SecurityConfig {
         http.authorizeHttpRequests((requests)
                 -> requests
                 .requestMatchers(SWAGGER_WHITELIST).permitAll()
-                .requestMatchers("/api/v1/users/**").permitAll()
                 .requestMatchers("/api/v1/authentication/**").permitAll()
-                .requestMatchers("/api/v1/movies/**").permitAll()
-                .requestMatchers("/api/v1/rating/**").permitAll()
+                .requestMatchers("/api/v1/movies/create-movie").hasRole("ADMIN")
+                .requestMatchers("/api/v1/movies/update-movie").hasRole("ADMIN")
+                .requestMatchers("/api/v1/movies/delete-movie/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/movies/search").permitAll()
                 .anyRequest().authenticated()
         );
         http.exceptionHandling(exception ->
