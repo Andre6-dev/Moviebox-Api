@@ -66,7 +66,7 @@ The project is organized into several packages:
     password:  password123
     ```
 
-4. I provided all the requests in insomnia format, you can import the file `john.doe@example.com.json` to test the application. You can import it in Postman.
+4. I provided all the requests in insomnia format, you can import the file `Insomnia_2024-10-14.json` to test the application. You can import it in Postman.
 
 5. Run the application and provided the enviroment variables of gmail if you want to register a user and activate the account.
     ```sh
