@@ -106,6 +106,7 @@ public class MovieService implements GetMoviesUseCase, AdminMoviesUseCases {
     }
 
     @Override
+    @Transactional
     public void deleteMovie(MoviePublicId publicId) {
         log.info("Deleting movie with id: {}", publicId);
         moviePersistencePort.deleteMovie(publicId);
