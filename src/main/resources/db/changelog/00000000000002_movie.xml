@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1728860227313-1" author="andre">
+        <createSequence incrementBy="1" sequenceName="movie_rating_sequence" startValue="1"/>
+    </changeSet>
+    <changeSet id="1728860227313-2" author="andre">
+        <createSequence incrementBy="1" sequenceName="movie_sequence" startValue="21"/>
+    </changeSet>
+    <changeSet id="1728860227313-3" author="andre">
+        <createTable tableName="category">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_category"/>
+            </column>
+            <column name="created_date" type="DATETIME"/>
+            <column name="last_modified_date" type="DATETIME"/>
+            <column name="category_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1728860227313-4" author="andre">
+        <createTable tableName="movie_rating">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_movie_rating"/>
+            </column>
+            <column name="created_date" type="DATETIME"/>
+            <column name="last_modified_date" type="DATETIME"/>
+            <column name="movie_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1728860227313-5" author="andre">
+        <createTable tableName="movies">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_movies"/>
+            </column>
+            <column name="created_date" type="DATETIME"/>
+            <column name="last_modified_date" type="DATETIME"/>
+            <column name="movie_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="public_id" type="UUID"/>
+            <column name="release_year" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="synopsis" type="TEXT"/>
+            <column name="poster_url" type="VARCHAR(255)"/>
+            <column name="category_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1728860227313-6" author="andre">
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="movies"
+                                 constraintName="FK_MOVIES_ON_CATEGORY" referencedColumnNames="id"
+                                 referencedTableName="category"/>
+    </changeSet>
+    <changeSet id="1728860227313-7" author="andre">
+        <addForeignKeyConstraint baseColumnNames="created_by" baseTableName="movies"
+                                 constraintName="FK_MOVIES_ON_CREATED_BY" referencedColumnNames="id"
+                                 referencedTableName="moviebox_users"/>
+    </changeSet>
+    <changeSet id="1728860227313-8" author="andre">
+        <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="movie_rating"
+                                 constraintName="FK_MOVIE_RATING_ON_MOVIE" referencedColumnNames="id"
+                                 referencedTableName="movies"/>
+    </changeSet>
+    <changeSet id="1728860227313-9" author="andre">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="movie_rating"
+                                 constraintName="FK_MOVIE_RATING_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="moviebox_users"/>
+    </changeSet>
+
+    <changeSet id="1728860227313-7" author="devandre">
+        <loadData
+                file="db/data/categories.csv"
+                separator=","
+                tableName="category">
+            <column name="id" type="numeric"/>
+            <column name="category_name" type="string"/>
+            <column name="created_date" type="datetime"/>
+            <column name="last_modified_date" type="datetime"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="1728860227313-8" author="devandre">
+        <loadData
+                file="db/data/movies.csv"
+                separator=","
+                tableName="movies">
+            <column name="id" type="numeric"/>
+            <column name="movie_name" type="string"/>
+            <column name="public_id" type="uuid" defaultValueComputed="randomUUID()"/>
+            <column name="release_year" type="numeric"/>
+            <column name="synopsis" type="string"/>
+            <column name="poster_url" type="string"/>
+            <column name="category_id" type="numeric"/>
+            <column name="created_by" type="numeric"/>
+            <column name="created_date" type="datetime"/>
+            <column name="last_modified_date" type="datetime"/>
+        </loadData>
+    </changeSet>
+
+    <changeSet id="1728860227313-9" author="devandre">
+        <loadData
+                file="db/data/movies_rating.csv"
+                separator=","
+                tableName="movie_rating">
+            <column name="id" type="numeric"/>
+            <column name="movie_id" type="numeric"/>
+            <column name="user_id" type="numeric"/>
+            <column name="rating" type="numeric"/>
+        </loadData>
+    </changeSet>
+
+</databaseChangeLog>

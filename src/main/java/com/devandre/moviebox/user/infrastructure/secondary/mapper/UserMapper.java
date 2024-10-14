@@ -11,11 +11,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
 
-    private final JpaRoleRepository jpaRoleRepository;
     private final RoleMapper roleMapper;
 
-    public UserMapper(JpaRoleRepository jpaRoleRepository, RoleMapper roleMapper) {
-        this.jpaRoleRepository = jpaRoleRepository;
+    public UserMapper(RoleMapper roleMapper) {
         this.roleMapper = roleMapper;
     }
 

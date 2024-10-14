@@ -38,6 +38,8 @@ public class SecurityConfig {
                 -> requests
                 .requestMatchers("/api/v1/users/**").permitAll()
                 .requestMatchers("/api/v1/authentication/**").permitAll()
+                .requestMatchers("/api/v1/movies/**").permitAll()
+                .requestMatchers("/api/v1/rating/**").permitAll()
                 .anyRequest().authenticated()
         );
         http.exceptionHandling(exception ->

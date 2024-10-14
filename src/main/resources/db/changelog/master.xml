@@ -10,6 +10,8 @@
     <property name="blobType" value="blob" dbms="postgresql"/>
     <property name="uuidType" value="uuid" dbms="postgresql"/>
     <property name="datetimeType" value="datetime" dbms="postgresql"/>
+    <property name="textType" value="text" dbms="postgresql"/>
 
     <include file="/db/changelog/00000000000001_user.xml" relativeToChangelogFile="false"/>
+    <include file="db/changelog/00000000000002_movie.xml"/>
 </databaseChangeLog>

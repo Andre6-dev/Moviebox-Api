@@ -7,6 +7,7 @@ import com.devandre.moviebox.user.domain.vo.UserPublicId;
 import java.util.Optional;
 
 public interface UserPersistencePort {
+    Optional<User> findById(Long id);
     User save(User user);
     Optional<User> get(UserPublicId userPublicId);
     Optional<User> getOneByEmail(UserEmail userEmail);
