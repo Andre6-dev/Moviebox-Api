@@ -54,7 +54,8 @@ The project is organized into several packages:
     cd moviebox
     ```
 
-2. You only need to configure the gmail stmp from your email account and put the enviroment variables of:
+2. You only need to configure the gmail stmp from your email account and put the enviroment variables of, and it's important to init the project. In case you can't
+   configure the gmail smtp, you can request me give you the steps but you need to configure your gmail mfa and create an app password.
     ```
    username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
