@@ -68,7 +68,12 @@ The project is organized into several packages:
 
 4. I provided all the requests in insomnia format, you can import the file `Insomnia_2024-10-14.json` to test the application. You can import it in Postman.
 
-5. Run the application and provided the enviroment variables of gmail if you want to register a user and activate the account.
+5. When you start the project, it is important to check the container that has been created in the docker desktop and initialize it, then you must connect to the db instance with the credentials that are in the compose.yaml and create the moviebox_db schema manually as liquibase does not do it automatically.
+   The script is as follows:
+    ```sql
+    CREATE SCHEMA moviebox_db;
+    ```
+6. Run the application and provided the enviroment variables of gmail if you want to register a user and activate the account.
     ```sh
     mvn spring-boot:run
     ```
